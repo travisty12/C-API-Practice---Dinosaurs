@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CretaceousPark.Controllers
 {
+  [ApiVersion("1.0")]
+  [ApiVersion("2.0")]
   [Route("api/[controller]")]
   [ApiController]
   public class AnimalsController : ControllerBase
@@ -18,7 +20,7 @@ namespace CretaceousPark.Controllers
     }
 
     // GET api/animals
-    [HttpGet]
+    [HttpGet, MapToApiVersion("1.0")]
     public ActionResult<IEnumerable<Animal>> Get(string name, string gender, string species)
     {
       var query = _db.Animals.AsQueryable();
@@ -38,6 +40,29 @@ namespace CretaceousPark.Controllers
         query = query.Where(entry => entry.Species == species);
       }
       return query.ToList();
+    }
+
+    // GET api/animals V2
+    [HttpGet, MapToApiVersion("2.0")]
+    public ActionResult<string[]> Get2(string name, string gender, string species)
+    {
+      var query = _db.Animals.AsQueryable();
+
+      if (name != null)
+      {
+        query = query.Where(entry => entry.Name == name);
+      }
+
+      if (gender != null)
+      {
+        query = query.Where(entry => entry.Gender == gender);
+      }
+
+      if (species != null)
+      {
+        query = query.Where(entry => entry.Species == species);
+      }
+      return new string[] {"Version 2.0", "Under construction" };
     }
 
     // POST api/animals
